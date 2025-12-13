@@ -1,0 +1,66 @@
+class PlayerTable {
+    
+    struct Player{
+        int playerId;
+        string name;
+        bool occupied;
+        Player() {
+            occupied = false;
+        }
+        Player(int id, string n) {
+            playerId = id;
+            name = n;
+            occupied = true;
+        }
+    };
+    Player table[101];
+    int size;
+    int n;
+
+    const double A = 0.6180339887; 
+
+    
+    int Hash1(int k){
+        double x = k * A;
+        double frac = x - floor(x);
+        int hash = (int)(n * frac);
+        return hash;
+    }
+
+    int Hash2(int k){
+        int hash = 1 + (k % (n - 1));
+        return hash;
+    }
+    
+    public:
+    
+    PlayerTable(int n){
+        this->n = n;
+        size = 0;
+    }
+
+    bool insert(int k, string name){
+        int hash1 =  Hash1(k);
+        int hash2 =  Hash2(k);
+        while (table[hash1].occupied) {
+            hash1 = (hash1 + hash2) % n;
+        }
+        Player player = Player(k, name);
+        table[hash1] = player;
+        size++;
+    }
+    
+    string search(int playerId) {
+        int hash1 =  Hash1(playerId);
+        int hash2 =  Hash2(playerId);
+        int count = 0;
+        while (table[hash1].occupied && count < n) {
+            if (table[hash1].playerId == playerId) {
+                return table[hash1].name;
+            }
+            hash1 = (hash1 + hash2) % n;
+            count++;
+        }
+        return "Not Found";;
+    }
+};
